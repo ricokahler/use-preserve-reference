@@ -34,9 +34,18 @@ function timer(milliseconds) {
 beforeEach(() => {
   objectHash.mockReset();
   objectHash.mockImplementation(jest.requireActual('object-hash'));
+
+  // see here...
+  // https://github.com/facebook/react/issues/11098#issuecomment-370614347
+  // ...for why these exist. not an ideal solution imo but it works
+  jest.spyOn(console, 'error');
+  console.error.mockImplementation(() => {});
+
+  jest.spyOn(console, 'warn');
+  console.warn.mockImplementation(() => {});
 });
 
-test('returns the previous value if the if the value is deep equal to the previous', async () => {
+it('returns the previous value if the if the value is deep equal to the previous', async () => {
   const effectHandler = jest.fn();
   const preservedHandler = jest.fn();
   const done = new DeferredPromise();
@@ -84,7 +93,7 @@ test('returns the previous value if the if the value is deep equal to the previo
   expect(objectHash).toHaveBeenCalledTimes(3);
 });
 
-test("doesn't call object-hash if the memory references are the same", async () => {
+it("doesn't call object-hash if the memory references are the same", async () => {
   const staticValue = { foo: 'test' };
   const preserveEffectHandler = jest.fn();
   const done = new DeferredPromise();
@@ -120,4 +129,131 @@ test("doesn't call object-hash if the memory references are the same", async () 
 
   expect(objectHash).toHaveBeenCalledTimes(1);
   expect(preserveEffectHandler).toHaveBeenCalledTimes(1);
+});
+
+it('throws if you give it a function', async () => {
+  const gotError = new DeferredPromise();
+
+  class ErrorBoundary extends React.Component {
+    state = {};
+
+    static getDerivedStateFromError() {
+      return { hadError: true };
+    }
+
+    componentDidCatch(error) {
+      gotError.resolve(error);
+    }
+
+    render() {
+      if (this.state.hadError) return null;
+      return this.props.children;
+    }
+  }
+
+  function ExampleComponent() {
+    usePreserveReference(() => {});
+
+    return null;
+  }
+
+  await act(async () => {
+    create(
+      <ErrorBoundary>
+        <ExampleComponent />
+      </ErrorBoundary>,
+    );
+
+    await gotError;
+  });
+
+  const error = await gotError;
+  expect(error).toMatchInlineSnapshot(
+    `[Error: You can't call \`usePreserveReference\` with functions]`,
+  );
+});
+
+it('warns if you give it a string or number in not production', async () => {
+  const nodeEnv = process.env.NODE_ENV;
+  process.env.NODE_ENV = 'not prod';
+
+  const done = new DeferredPromise();
+
+  function ExampleComponent() {
+    usePreserveReference('string');
+    usePreserveReference(5);
+
+    useEffect(() => {
+      timer(0).then(() => done.resolve());
+    }, []);
+
+    return null;
+  }
+
+  await act(async () => {
+    create(<ExampleComponent />);
+
+    await done;
+  });
+
+  expect(console.warn).toHaveBeenCalledTimes(2);
+  expect(console.warn.mock.calls.map(args => args[0])).toMatchInlineSnapshot(`
+    Array [
+      "You passed in a string to \`usePreserveReference\`. You don't need \`usePreserveReference\` for strings",
+      "You passed in a number to \`usePreserveReference\`. You don't need \`usePreserveReference\` for numbers",
+    ]
+  `);
+
+  process.env.NODE_ENV = nodeEnv;
+});
+
+it("doesn't warn for strings and numbers in production mode", async () => {
+  const nodeEnv = process.env.NODE_ENV;
+  process.env.NODE_ENV = 'production';
+
+  const done = new DeferredPromise();
+
+  function ExampleComponent() {
+    usePreserveReference('string');
+    usePreserveReference(5);
+
+    useEffect(() => {
+      timer(0).then(() => done.resolve());
+    }, []);
+
+    return null;
+  }
+
+  await act(async () => {
+    create(<ExampleComponent />);
+
+    await done;
+  });
+
+  expect(console.warn).not.toHaveBeenCalled();
+
+  process.env.NODE_ENV = nodeEnv;
+});
+
+it('works for undefined values', async () => {
+  const done = new DeferredPromise();
+
+  function ExampleComponent() {
+    const result = usePreserveReference(undefined);
+
+    useEffect(() => {
+      timer(0).then(() => done.resolve(result));
+    }, [result]);
+
+    return null;
+  }
+
+  await act(async () => {
+    create(<ExampleComponent />);
+
+    await done;
+  });
+
+  const shouldBeUndefined = await done;
+  expect(shouldBeUndefined).toBe(undefined);
 });
