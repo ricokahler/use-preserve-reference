@@ -41,7 +41,7 @@ async function createPackageJson() {
     homepage: packageJson.homepage,
     peerDependencies: packageJson.peerDependencies,
     dependencies: packageJson.dependencies,
-    name: 'use-preserve-references',
+    name: packageJson.name,
     main: packageJson.main,
   };
 
