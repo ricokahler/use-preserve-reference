@@ -32,7 +32,7 @@ function memoize(fn) {
  */
 function usePreserveReference(value) {
   if (typeof value === 'function') {
-    throw new Error("You can't `usePreserveReference` with functions");
+    throw new Error("You can't call `usePreserveReference` with functions");
   }
 
   if (process.env.NODE_ENV !== 'production') {
