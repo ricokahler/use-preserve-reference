@@ -32,8 +32,8 @@ function useExampleHook() {
 
 The current implementation of `usePreserveReference` uses `object-hash` to determine if the information within your reference changes.
 
-⚠️ `object-hash` performs a full traversal of your object in order to compute a hash for it. If your object is _really_ large (like 500+ overall keys), think twice before wrapping with `usePreserveReference`. ⚠️
+⚠️ `object-hash` performs a full traversal of your object in order to compute a hash for it. If your object is _really_ large (like 500+ overall keys), think twice before wrapping with `usePreserveReference`
 
 ### `usePreserveReference` is only for reference types
 
-`usePreserveReference` is only necessary for objects and arrays. If the value you're trying to preserve is a value type (e.g. a string, number) then you don't need this hook.
+⚠️ `usePreserveReference` is only necessary for objects and arrays. If the value you're trying to preserve is a value type (e.g. a string, number) then you don't need this hook.
