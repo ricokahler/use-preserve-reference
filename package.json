@@ -36,7 +36,7 @@
     "babel-loader": "^8.0.6",
     "coveralls": "^3.0.6",
     "eslint": "^6.2.2",
-    "eslint-config-react-app": "^5.0.1",
+    "eslint-config-react-app": "^5.2.0",
     "eslint-plugin-flowtype": "^3.13.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jest": "^22.15.2",
