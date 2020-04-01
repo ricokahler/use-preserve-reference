@@ -60,6 +60,6 @@
   },
   "private": true,
   "dependencies": {
-    "object-hash": "^2.0.2"
+    "object-hash": "^2.0.3"
   }
 }
