@@ -2,7 +2,7 @@
 
 > `usePreserveReference` is a hook that will return the previous value if it deeps equals the current value
 
-The deep equal is currently implemented using `object-hash`.
+The deep equal is currently implemented using `JSON.stringify`. This can be overriden by suppling a second arg however.
 
 ## Installation
 
