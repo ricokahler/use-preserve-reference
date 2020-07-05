@@ -1,54 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { act, create } from 'react-test-renderer';
-import objectHash from 'object-hash';
-import usePreserveReference from './usePreserveReference';
+import usePreserveReference from './';
+import hashFn from './hash-fn';
 
-jest.mock('object-hash', () => jest.fn().mockImplementation(jest.requireActual('object-hash')));
+jest.mock('./hash-fn', () =>
+  jest.fn().mockImplementation(jest.requireActual('./hash-fn').default)
+);
 
-class DeferredPromise {
-  constructor() {
-    this.state = 'pending';
-    this._promise = new Promise((resolve, reject) => {
-      this.resolve = value => {
-        this.state = 'fulfilled';
-        resolve(value);
-      };
-      this.reject = reason => {
-        this.state = 'rejected';
-        reject(reason);
-      };
-    });
-
-    this.then = this._promise.then.bind(this._promise);
-    this.catch = this._promise.catch.bind(this._promise);
-    this.finally = this._promise.finally.bind(this._promise);
-  }
-
-  [Symbol.toStringTag] = 'Promise';
+function timer(milliseconds: number) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
-function timer(milliseconds) {
-  return new Promise(resolve => setTimeout(resolve, milliseconds));
+function createDeferredPromise() {
+  let resolve!: (...params: any[]) => void;
+  let reject!: (error: any) => void;
+
+  const promise = new Promise((thisResolve, thisReject) => {
+    resolve = thisResolve;
+    reject = thisReject;
+  });
+
+  return Object.assign(promise, { resolve, reject });
 }
 
 beforeEach(() => {
-  objectHash.mockReset();
-  objectHash.mockImplementation(jest.requireActual('object-hash'));
+  // @ts-ignore
+  hashFn.mockReset();
+  // @ts-ignore
+  hashFn.mockImplementation(jest.requireActual('./hash-fn').default);
 
   // see here...
   // https://github.com/facebook/react/issues/11098#issuecomment-370614347
   // ...for why these exist. not an ideal solution imo but it works
   jest.spyOn(console, 'error');
+  // @ts-ignore
   console.error.mockImplementation(() => {});
 
   jest.spyOn(console, 'warn');
+  // @ts-ignore
   console.warn.mockImplementation(() => {});
 });
 
 it('returns the previous value if the if the value is deep equal to the previous', async () => {
   const effectHandler = jest.fn();
   const preservedHandler = jest.fn();
-  const done = new DeferredPromise();
+  const done = createDeferredPromise();
 
   function ExampleComponent() {
     const [value, setValue] = useState({ foo: 'test' });
@@ -90,13 +86,13 @@ it('returns the previous value if the if the value is deep equal to the previous
 
   expect(effectHandler).toHaveBeenCalledTimes(3);
   expect(preservedHandler).toHaveBeenCalledTimes(2);
-  expect(objectHash).toHaveBeenCalledTimes(3);
+  expect(hashFn).toHaveBeenCalledTimes(3);
 });
 
 it("doesn't call object-hash if the memory references are the same", async () => {
   const staticValue = { foo: 'test' };
   const preserveEffectHandler = jest.fn();
-  const done = new DeferredPromise();
+  const done = createDeferredPromise();
 
   function ExampleComponent() {
     const [value, setValue] = useState({ staticValue });
@@ -127,21 +123,21 @@ it("doesn't call object-hash if the memory references are the same", async () =>
     await done;
   });
 
-  expect(objectHash).toHaveBeenCalledTimes(1);
+  expect(hashFn).toHaveBeenCalledTimes(1);
   expect(preserveEffectHandler).toHaveBeenCalledTimes(1);
 });
 
 it('throws if you give it a function', async () => {
-  const gotError = new DeferredPromise();
+  const gotError = createDeferredPromise();
 
   class ErrorBoundary extends React.Component {
-    state = {};
+    state: { hadError: boolean } = { hadError: false };
 
     static getDerivedStateFromError() {
       return { hadError: true };
     }
 
-    componentDidCatch(error) {
+    componentDidCatch(error: Error) {
       gotError.resolve(error);
     }
 
@@ -161,7 +157,7 @@ it('throws if you give it a function', async () => {
     create(
       <ErrorBoundary>
         <ExampleComponent />
-      </ErrorBoundary>,
+      </ErrorBoundary>
     );
 
     await gotError;
@@ -169,15 +165,17 @@ it('throws if you give it a function', async () => {
 
   const error = await gotError;
   expect(error).toMatchInlineSnapshot(
-    `[Error: You can't call \`usePreserveReference\` with functions]`,
+    `[Error: You can't call \`usePreserveReference\` with functions.]`
   );
 });
 
 it('warns if you give it a string or number in not production', async () => {
+  // @ts-ignore
   const nodeEnv = process.env.NODE_ENV;
+  // @ts-ignore
   process.env.NODE_ENV = 'not prod';
 
-  const done = new DeferredPromise();
+  const done = createDeferredPromise();
 
   function ExampleComponent() {
     usePreserveReference('string');
@@ -197,21 +195,25 @@ it('warns if you give it a string or number in not production', async () => {
   });
 
   expect(console.warn).toHaveBeenCalledTimes(2);
-  expect(console.warn.mock.calls.map(args => args[0])).toMatchInlineSnapshot(`
+  // @ts-ignore
+  expect(console.warn.mock.calls.map((args) => args[0])).toMatchInlineSnapshot(`
     Array [
-      "You passed in a string to \`usePreserveReference\`. You don't need \`usePreserveReference\` for strings",
-      "You passed in a number to \`usePreserveReference\`. You don't need \`usePreserveReference\` for numbers",
+      "You passed in a string to \`usePreserveReference\`. You don't need \`usePreserveReference\` for strings.",
+      "You passed in a number to \`usePreserveReference\`. You don't need \`usePreserveReference\` for numbers.",
     ]
   `);
 
+  // @ts-ignore
   process.env.NODE_ENV = nodeEnv;
 });
 
 it("doesn't warn for strings and numbers in production mode", async () => {
+  // @ts-ignore
   const nodeEnv = process.env.NODE_ENV;
+  // @ts-ignore
   process.env.NODE_ENV = 'production';
 
-  const done = new DeferredPromise();
+  const done = createDeferredPromise();
 
   function ExampleComponent() {
     usePreserveReference('string');
@@ -232,11 +234,12 @@ it("doesn't warn for strings and numbers in production mode", async () => {
 
   expect(console.warn).not.toHaveBeenCalled();
 
+  // @ts-ignore
   process.env.NODE_ENV = nodeEnv;
 });
 
 it('works for undefined values', async () => {
-  const done = new DeferredPromise();
+  const done = createDeferredPromise();
 
   function ExampleComponent() {
     const result = usePreserveReference(undefined);

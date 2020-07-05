@@ -14,8 +14,8 @@ const args = process.argv.slice(2);
 function execute(command) {
   return new Promise((resolve, reject) => {
     exec(command, (err, stdout, stderr) => {
-      console.log(stdout);
-      console.error(stderr);
+      process.stdout.write(stdout);
+      process.stderr.write(stderr);
 
       if (err) {
         reject(err);
@@ -42,37 +42,40 @@ async function createPackageJson() {
     peerDependencies: packageJson.peerDependencies,
     dependencies: packageJson.dependencies,
     name: packageJson.name,
-    main: packageJson.main,
+    main: 'index.js',
+    module: 'index.esm.js',
   };
 
   await writeFile(
-    path.resolve(root, './build/package.json'),
+    path.resolve(root, './dist/package.json'),
     JSON.stringify(minimalPackage, null, 2),
   );
 }
 
 async function build() {
   if (!args.includes('--no-clean')) {
-    console.log('Cleaning…');
-    await execute('rm -rf node_modules build && npm i');
-    await execute('mkdir build');
+    console.log('(re)Installing…');
+    await execute('npm i');
   }
 
-  console.log('Copying typings (rsync)…');
-  await execute('rsync -r --include "*.d.ts" --include "*/" --exclude="*" --quiet ./src/* ./build');
+  console.log('Linting…');
+  await execute('npm run lint');
 
-  console.log('Checking Types (tsc)…');
+  console.log('Running tests…');
+  await execute('npx jest');
+
+  console.log('Writing Types (tsc)…');
   await execute('npx tsc');
 
-  console.log('Compiling (webpack)…');
-  await execute('npx webpack -p');
+  console.log('Compiling (rollup)…');
+  await execute('npx rollup -c');
 
   console.log('Writing package.json…');
   await createPackageJson();
 
   console.log('Copying README.md…');
   const readme = await readFile(path.resolve(root, './README.md'));
-  await writeFile(path.resolve(root, './build/README.md'), readme);
+  await writeFile(path.resolve(root, './dist/README.md'), readme);
 
   console.log('Done building!');
 }
