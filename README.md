@@ -47,7 +47,7 @@ export default Component;
 
 [CodeSandbox link](https://codesandbox.io/s/use-preserve-reference-demo-l4tfq?file=/src/App.js)
 
-Notice how the preserved reference does not change.
+Notice how the preserved reference does not cause the second effect to fire because it does not change.
 
 ## Things to note
 
