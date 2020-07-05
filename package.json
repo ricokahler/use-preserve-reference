@@ -1,11 +1,11 @@
 {
   "name": "use-preserve-reference",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A hook that preserves object references when values are deep equal to the previous render",
-  "main": "index.js",
   "scripts": {
-    "test": "eslint src && jest --coverage --coverageReporters=text-lcov | coveralls",
-    "build": "eslint src && npx jest && node ./scripts/build.js",
+    "test": "jest",
+    "build": "node ./scripts/build.js",
+    "lint": "eslint src --ext .ts,.tsx,.js,.jsx",
     "publish": "npm run build && cd build && npm publish && cd .."
   },
   "repository": {
@@ -16,26 +16,31 @@
     "react",
     "react-hooks"
   ],
-  "author": "Rico Kahler",
+  "author": {
+    "email": "ricokahler@me.com",
+    "name": "Rico Kahler",
+    "url": "https://github.com/ricokahler"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ricokahler/use-preserve-reference/issues"
   },
   "homepage": "https://github.com/ricokahler/use-preserve-reference#readme",
   "devDependencies": {
-    "@babel/cli": "^7.5.0",
     "@babel/core": "^7.8.4",
     "@babel/plugin-proposal-class-properties": "^7.5.0",
+    "@babel/plugin-transform-runtime": "^7.10.4",
     "@babel/preset-env": "^7.5.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.3.3",
+    "@rollup/plugin-babel": "^5.0.4",
+    "@rollup/plugin-node-resolve": "^8.1.0",
     "@types/jest": "^26.0.3",
     "@types/react": "^16.8.23",
     "@types/react-test-renderer": "^16.9.2",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
     "babel-eslint": "^10.1.0",
-    "babel-loader": "^8.0.6",
     "coveralls": "^3.0.6",
     "eslint": "^6.8.0",
     "eslint-config-react-app": "^5.2.1",
@@ -51,18 +56,14 @@
     "react": "^16.13.0",
     "react-dom": "^16.10.2",
     "react-test-renderer": "^16.10.2",
-    "redux": "^4.0.1",
-    "rimraf": "^3.0.2",
-    "typescript": "^3.5.2",
-    "webpack": "^4.41.6",
-    "webpack-cli": "^3.3.5"
+    "rollup": "^2.18.2",
+    "typescript": "^3.5.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"
   },
   "private": true,
   "dependencies": {
-    "object-hash": "^2.0.2",
     "use-pull": "^1.0.0"
   }
 }
