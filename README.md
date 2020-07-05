@@ -15,7 +15,7 @@ npm install --save use-preserve-reference
 The usage is pretty straightforward, wrap your references (e.g. objects and arrays) with `usePreserveReference` and then this lib will only return a new reference if the information in your object/array changes.
 
 ```js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import usePreserveReference from 'use-preserve-reference';
 
 function Component() {
@@ -35,10 +35,14 @@ function Component() {
 
   return (
     <div>
-      <button>Click to re-render {count}</button>
+      <button onClick={() => setCount(count + 1)}>
+        Click to re-render {count}
+      </button>
     </div>
   );
 }
+
+export default Component;
 ```
 
 [CodeSandbox link](https://codesandbox.io/s/use-preserve-reference-demo-l4tfq?file=/src/App.js)
