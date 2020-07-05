@@ -37,17 +37,3 @@ The current implementation of `usePreserveReference` uses `object-hash` to deter
 ### `usePreserveReference` is only for reference types
 
 ⚠️ `usePreserveReference` is only necessary for objects and arrays. If the value you're trying to preserve is a value type (e.g. a string, number) then you don't need this hook.
-
-## Errors
-
-### Error code 1
-
-You can't call `usePreserveReference` with functions
-
-### Error code 2
-
-You passed in a string to `usePreserveReference`. You don't need `usePreserveReference` for strings.
-
-### Error code 3
-
-You passed in a number to `usePreserveReference`. You don't need `usePreserveReference` for numbers.

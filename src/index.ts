@@ -38,19 +38,17 @@ type HashFn = (obj: any) => string;
  */
 function usePreserveReference<T>(value: T, hash: HashFn = hashFn): T {
   if (typeof value === 'function') {
-    throw new Error();
+    throw new Error("You can't call `usePreserveReference` with functions.");
   }
 
   const getHash = usePull(hash);
 
   // @ts-ignore
   if (process.env.NODE_ENV !== 'production') {
-    if (typeof value === 'string') {
-      console.warn();
-    }
-
-    if (typeof value === 'number') {
-      console.warn();
+    if (typeof value === 'string' || typeof value === 'number') {
+      console.warn(
+        `You passed in a ${typeof value} to \`usePreserveReference\`. You don't need \`usePreserveReference\` for ${typeof value}s.`,
+      );
     }
   }
 
