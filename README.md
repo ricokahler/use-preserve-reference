@@ -1,4 +1,4 @@
-# usePreserveReference · [![Build Status](https://travis-ci.org/ricokahler/use-preserve-reference.svg?branch=master)](https://travis-ci.org/ricokahler/use-preserve-reference) [![Coverage Status](https://coveralls.io/repos/github/ricokahler/use-preserve-reference/badge.svg?branch=master)](https://coveralls.io/github/ricokahler/use-preserve-reference?branch=master)
+# usePreserveReference · [![codecov](https://codecov.io/gh/ricokahler/use-preserve-reference/branch/master/graph/badge.svg)](https://codecov.io/gh/ricokahler/use-preserve-reference)
 
 > `usePreserveReference` is a hook that will return the previous value if it deeps equals the current value
 
@@ -15,24 +15,54 @@ npm install --save use-preserve-reference
 The usage is pretty straightforward, wrap your references (e.g. objects and arrays) with `usePreserveReference` and then this lib will only return a new reference if the information in your object/array changes.
 
 ```js
-function useExampleHook() {
-  const value = useValue();
-  const info = useInfo();
+import React, { useState } from 'react';
+import usePreserveReference from 'use-preserve-reference';
 
-  const referenceCreatedDuringRender = [value, info];
+function Component() {
+  const [count, setCount] = useState(0);
+  const referenceCreatedDuringRender = ['foo', 'bar'];
   const preservedReference = usePreserveReference(referenceCreatedDuringRender);
 
-  return preservedReference;
+  useEffect(() => {
+    // changes every render
+    console.log('reference 1 changed');
+  }, [referenceCreatedDuringRender]);
+
+  useEffect(() => {
+    // only the first render
+    console.log('reference 2 changed');
+  }, [preservedReference]);
+
+  return (
+    <div>
+      <button>Click to re-render {count}</button>
+    </div>
+  );
 }
 ```
 
+[CodeSandbox link](#TODO)
+
+Notice how the preserved reference does not change.
+
 ## Things to note
 
-### `object-hash` for comparisons
+### `JSON.stringify` for comparisons
 
-The current implementation of `usePreserveReference` uses `object-hash` to determine if the information within your reference changes.
+The current implementation of `usePreserveReference` uses `JSON.stringify` to determine if the information within your reference changes.
 
-⚠️ `object-hash` performs a full traversal of your object in order to compute a hash for it. If your object is _really_ large (like 500+ overall keys), think twice before wrapping with `usePreserveReference`
+⚠️ `JSON.stringify` performs a full traversal of your object in order to compute a hash for it. If your object is large, think twice before wrapping with `usePreserveReference`
+
+You can override this hash function implement by providing a second parameter to `usePreserveReference`
+
+```js
+function Component({ foo }) {
+  // You can optionally provide a second parameter to compute the hash used for
+  // comparisons. The hash function takes in the input object and returns a
+  // string. If the string matches then the previous reference will be returned.
+  usePreserveReference(foo, (foo) => JSON.stringify(foo));
+}
+```
 
 ### `usePreserveReference` is only for reference types
 
