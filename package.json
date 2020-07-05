@@ -1,6 +1,6 @@
 {
   "name": "use-preserve-reference",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "description": "A hook that preserves object references when values are deep equal to the previous render",
   "keywords": [
