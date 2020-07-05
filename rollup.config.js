@@ -26,7 +26,7 @@ export default [
         extensions,
       }),
     ],
-    external: ['react'],
+    external: ['react', 'use-pull'],
   },
   {
     input: './src/index.ts',
@@ -48,6 +48,6 @@ export default [
         extensions,
       }),
     ],
-    external: ['react'],
+    external: ['react', 'use-pull'],
   },
 ];
