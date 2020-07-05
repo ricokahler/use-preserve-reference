@@ -3,10 +3,12 @@ import { act, create } from 'react-test-renderer';
 import usePreserveReference from './';
 import hashFn from './hash-fn';
 
-jest.mock('./hash-fn', () => jest.fn().mockImplementation(jest.requireActual('./hash-fn').default));
+jest.mock('./hash-fn', () =>
+  jest.fn().mockImplementation(jest.requireActual('./hash-fn').default)
+);
 
 function timer(milliseconds: number) {
-  return new Promise(resolve => setTimeout(resolve, milliseconds));
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
 function createDeferredPromise() {
@@ -155,7 +157,7 @@ it('throws if you give it a function', async () => {
     create(
       <ErrorBoundary>
         <ExampleComponent />
-      </ErrorBoundary>,
+      </ErrorBoundary>
     );
 
     await gotError;
@@ -163,7 +165,7 @@ it('throws if you give it a function', async () => {
 
   const error = await gotError;
   expect(error).toMatchInlineSnapshot(
-    `[Error: You can't call \`usePreserveReference\` with functions.]`,
+    `[Error: You can't call \`usePreserveReference\` with functions.]`
   );
 });
 
@@ -194,7 +196,7 @@ it('warns if you give it a string or number in not production', async () => {
 
   expect(console.warn).toHaveBeenCalledTimes(2);
   // @ts-ignore
-  expect(console.warn.mock.calls.map(args => args[0])).toMatchInlineSnapshot(`
+  expect(console.warn.mock.calls.map((args) => args[0])).toMatchInlineSnapshot(`
     Array [
       "You passed in a string to \`usePreserveReference\`. You don't need \`usePreserveReference\` for strings.",
       "You passed in a number to \`usePreserveReference\`. You don't need \`usePreserveReference\` for numbers.",

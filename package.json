@@ -1,6 +1,6 @@
 {
   "name": "use-preserve-reference",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "description": "A hook that preserves object references when values are deep equal to the previous render",
   "scripts": {
     "test": "jest",
@@ -27,43 +27,41 @@
   },
   "homepage": "https://github.com/ricokahler/use-preserve-reference#readme",
   "devDependencies": {
-    "@babel/core": "^7.8.4",
-    "@babel/plugin-proposal-class-properties": "^7.5.0",
+    "@babel/core": "^7.10.4",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-transform-runtime": "^7.10.4",
-    "@babel/preset-env": "^7.5.0",
-    "@babel/preset-react": "^7.0.0",
-    "@babel/preset-typescript": "^7.3.3",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-react": "^7.10.4",
+    "@babel/preset-typescript": "^7.10.4",
     "@rollup/plugin-babel": "^5.0.4",
     "@rollup/plugin-node-resolve": "^8.1.0",
     "@types/jest": "^26.0.3",
-    "@types/react": "^16.8.23",
+    "@types/react": "^16.9.41",
     "@types/react-test-renderer": "^16.9.2",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
     "babel-eslint": "^10.1.0",
-    "coveralls": "^3.0.6",
     "eslint": "^6.8.0",
     "eslint-config-react-app": "^5.2.1",
     "eslint-plugin-flowtype": "^4.7.0",
     "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-jest": "^22.15.2",
+    "eslint-plugin-jest": "^22.21.0",
     "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-react": "^7.20.3",
     "eslint-plugin-react-hooks": "^2.5.1",
-    "jest": "^24.9.0",
-    "node-fetch": "^2.6.0",
-    "prettier": "^1.19.1",
-    "react": "^16.13.0",
-    "react-dom": "^16.10.2",
-    "react-test-renderer": "^16.10.2",
+    "jest": "^26.1.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-test-renderer": "^16.13.1",
     "rollup": "^2.18.2",
-    "typescript": "^3.5.2"
+    "typescript": "^3.9.6"
   },
   "peerDependencies": {
     "react": "^16.8.0"
   },
   "private": true,
   "dependencies": {
+    "prettier": "^2.0.5",
     "use-pull": "^1.0.0"
   }
 }

@@ -47,7 +47,7 @@ function usePreserveReference<T>(value: T, hash: HashFn = hashFn): T {
   if (process.env.NODE_ENV !== 'production') {
     if (typeof value === 'string' || typeof value === 'number') {
       console.warn(
-        `You passed in a ${typeof value} to \`usePreserveReference\`. You don't need \`usePreserveReference\` for ${typeof value}s.`,
+        `You passed in a ${typeof value} to \`usePreserveReference\`. You don't need \`usePreserveReference\` for ${typeof value}s.`
       );
     }
   }
@@ -59,8 +59,12 @@ function usePreserveReference<T>(value: T, hash: HashFn = hashFn): T {
     return memoize(hash);
   }, [getHash]);
 
+  const hashValue = memoizedHash(
+    value === undefined ? undefinedPlaceholder : value
+  );
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useMemo(() => value, [memoizedHash(value === undefined ? undefinedPlaceholder : value)]);
+  return useMemo(() => value, [hashValue]);
 }
 
 export default usePreserveReference;
