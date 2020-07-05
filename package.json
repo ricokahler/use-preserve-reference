@@ -1,31 +1,35 @@
 {
   "name": "use-preserve-reference",
   "version": "1.0.0",
+  "private": true,
   "description": "A hook that preserves object references when values are deep equal to the previous render",
-  "scripts": {
-    "test": "jest",
-    "build": "node ./scripts/build.js",
-    "lint": "eslint src --ext .ts,.tsx,.js,.jsx",
-    "publish": "npm run build && cd build && npm publish && cd .."
+  "keywords": [
+    "react",
+    "react-hooks"
+  ],
+  "homepage": "https://github.com/ricokahler/use-preserve-reference#readme",
+  "bugs": {
+    "url": "https://github.com/ricokahler/use-preserve-reference/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ricokahler/use-preserve-reference.git"
   },
-  "keywords": [
-    "react",
-    "react-hooks"
-  ],
+  "license": "MIT",
   "author": {
-    "email": "ricokahler@me.com",
     "name": "Rico Kahler",
+    "email": "ricokahler@me.com",
     "url": "https://github.com/ricokahler"
   },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ricokahler/use-preserve-reference/issues"
+  "scripts": {
+    "build": "node ./scripts/build.js",
+    "lint": "eslint src --ext .ts,.tsx,.js,.jsx",
+    "publish": "npm run build && cd build && npm publish && cd ..",
+    "test": "jest"
   },
-  "homepage": "https://github.com/ricokahler/use-preserve-reference#readme",
+  "dependencies": {
+    "use-pull": "1.0.0"
+  },
   "devDependencies": {
     "@babel/core": "7.10.4",
     "@babel/plugin-proposal-class-properties": "7.10.4",
@@ -50,6 +54,7 @@
     "eslint-plugin-react": "7.20.3",
     "eslint-plugin-react-hooks": "2.5.1",
     "jest": "26.1.0",
+    "prettier": "2.0.5",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-test-renderer": "16.13.1",
@@ -58,10 +63,5 @@
   },
   "peerDependencies": {
     "react": "^16.8.0"
-  },
-  "private": true,
-  "dependencies": {
-    "prettier": "2.0.5",
-    "use-pull": "1.0.0"
   }
 }
