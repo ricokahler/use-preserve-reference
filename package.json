@@ -58,7 +58,7 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-test-renderer": "16.13.1",
-    "rollup": "2.26.9",
+    "rollup": "2.26.10",
     "typescript": "4.0.2"
   },
   "peerDependencies": {
